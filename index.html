@@ -27,7 +27,7 @@
     --mono: 'IBM Plex Mono', monospace;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth; scroll-padding-top:80px;}
   body{
     background:var(--bg);
     color:var(--text);
@@ -48,7 +48,7 @@
   /* ---------- Header ---------- */
   header{
     position:sticky; top:0; z-index:50;
-    background:rgba(11,15,20,0.88);
+    background:rgba(10,22,40,0.88);
     backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line);
   }
@@ -71,7 +71,7 @@
     color:var(--amber);
     transition: border-color .15s, background .15s;
   }
-  .nav-cta:hover{ border-color:var(--amber); background:rgba(232,163,61,0.06); }
+  .nav-cta:hover{ border-color:var(--amber); background:rgba(51,199,239,0.08); }
   .navlinks{
     display:none;
   }
@@ -121,7 +121,7 @@
     font-size:0.95rem; font-weight:500; transition: transform .15s, background .15s, border-color .15s;
   }
   .btn-primary{ background:var(--amber); color:#071923; }
-  .btn-primary:hover{ background:#f2b054; }
+  .btn-primary:hover{ background:#5fd6f4; }
   .btn-ghost{ border:1px solid var(--line); color:var(--text); }
   .btn-ghost:hover{ border-color:var(--text-faint); }
 
@@ -194,6 +194,98 @@
     border:1px solid var(--line); border-radius:12px; padding:4px 10px;
   }
 
+  /* ---------- Work carousel ---------- */
+  .carousel{ position:relative; }
+  .carousel-viewport{
+    overflow:hidden;
+    border:1px solid var(--line);
+    border-radius:6px;
+    background:var(--bg-surface);
+    touch-action:pan-y;
+  }
+  .carousel-track{
+    display:flex;
+    transition:transform .7s cubic-bezier(.22,.61,.36,1);
+    will-change:transform;
+  }
+  .carousel-slide{
+    flex:0 0 100%;
+    position:relative;
+    aspect-ratio:16 / 9;
+    margin:0;
+    background:var(--bg-surface-2);
+  }
+  @media (max-width:640px){ .carousel-slide{ aspect-ratio:4 / 3; } }
+  .carousel-slide{ overflow:hidden; }
+  .carousel-slide img{
+    position:absolute; inset:0; z-index:1;
+    width:100%; height:100%; object-fit:cover;
+  }
+  /* Portrait (vertical) photos are shown whole, centered over a blurred copy of themselves */
+  .carousel-slide.is-contain img{ object-fit:contain; }
+  .carousel-slide .slide-backdrop{
+    position:absolute; inset:-40px; z-index:0;
+    background-size:cover; background-position:center;
+    filter:blur(30px) brightness(0.5);
+  }
+  /* Shown behind each photo; visible only until you add a real image */
+  .carousel-slide .ph{
+    position:absolute; inset:0; z-index:0;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    padding:24px;
+    font-family:var(--mono); font-size:0.82rem; color:var(--text-faint);
+  }
+  .carousel-slide figcaption{
+    position:absolute; left:0; right:0; bottom:0; z-index:2;
+    padding:64px 28px 24px;
+    background:linear-gradient(to top, rgba(10,22,40,0.94) 0%, rgba(10,22,40,0.6) 55%, rgba(10,22,40,0) 100%);
+  }
+  @media (max-width:640px){ .carousel-slide figcaption{ padding:48px 18px 16px; } }
+  .cap-title{ font-family:var(--serif); font-size:1.25rem; font-weight:500; }
+  .cap-meta{ font-family:var(--mono); font-size:0.78rem; color:var(--teal); margin-top:4px; }
+
+  .carousel-controls{
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+    margin-top:20px;
+  }
+  .carousel-buttons{ display:flex; gap:10px; }
+  .car-btn{
+    width:44px; height:44px;
+    display:inline-flex; align-items:center; justify-content:center;
+    background:transparent; color:var(--text);
+    border:1px solid var(--line); border-radius:var(--radius);
+    cursor:pointer;
+    transition:border-color .15s, color .15s, background .15s;
+  }
+  .car-btn:hover{ border-color:var(--amber); color:var(--amber); }
+  .car-btn svg{ width:18px; height:18px; display:block; }
+  .car-btn .icon-play{ display:none; }
+  .carousel.is-paused .car-btn .icon-play{ display:block; }
+  .carousel.is-paused .car-btn .icon-pause{ display:none; }
+
+  .carousel-dots{ display:flex; gap:4px; flex-wrap:wrap; justify-content:center; }
+  .car-dot{
+    width:28px; height:28px; padding:0;
+    background:transparent; border:none; cursor:pointer;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  .car-dot::before{
+    content:''; display:block;
+    width:8px; height:8px; border-radius:50%;
+    background:var(--line);
+    transition:background .2s, transform .2s;
+  }
+  .car-dot:hover::before{ background:var(--text-faint); }
+  .car-dot[aria-current="true"]::before{ background:var(--amber); transform:scale(1.3); }
+  .carousel-count{
+    font-family:var(--mono); font-size:0.8rem; color:var(--text-faint);
+    min-width:64px; text-align:right;
+  }
+  @media (max-width:640px){
+    .carousel-controls{ flex-wrap:wrap; }
+    .carousel-dots{ order:3; width:100%; }
+  }
+
   /* ---------- Process ---------- */
   .process{
     display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
@@ -248,7 +340,8 @@
     font-family:var(--body); font-weight:600; font-size:0.95rem; cursor:pointer; transition:background .15s;
     margin-top:4px;
   }
-  .cta-form button:hover{ background:#f2b054; }
+  .cta-form button:hover{ background:#5fd6f4; }
+  .cta-form button:disabled{ opacity:0.7; cursor:default; }
   .form-note{ font-size:0.78rem; color:var(--text-faint); }
 
   /* Toast (success/error) */
@@ -283,6 +376,7 @@
     <a href="#" class="logo"><img src="YOUR-LOGO-URL" alt="SavvyTech" loading="lazy"></a>
     <nav class="navlinks">
       <a href="#services">Services</a>
+      <a href="#work">Our work</a>
       <a href="#process">How it works</a>
       <a href="#area">Service area</a>
       <a href="#contact">Contact</a>
@@ -296,9 +390,8 @@
   <div class="wrap hero-grid">
     <div>
       <div class="hero-eyebrow"><span class="rule"></span>Lake Norman &amp; surrounding areas</div>
-      <h1>Connect.Protect.
-        Simplify.</h1>
-      <p class="hero-sub">SavvyTech designs and installs the automation, security, network, and entertainment systems behind well-run homes and businesses — all wired to work together.
+      <h1>Connect. Protect. Simplify.</h1>
+      <p class="hero-sub">SavvyTech designs and installs the automation, security, network, and entertainment systems behind well-run homes and businesses — all wired to work together.</p>
       <div class="hero-actions">
         <a href="#contact" class="btn btn-primary">Contact us</a>
         <a href="#services" class="btn btn-ghost">Our services</a>
@@ -335,7 +428,7 @@
       <div class="section-label">/ services</div>
       <div>
         <h2>Technology that works for you</h2>
-        <p class="section-desc">Every project begins with how you live and use your space. From there, we design and install a cusomtized technology solution tailored specifically for you.</p>
+        <p class="section-desc">Every project begins with how you live and use your space. From there, we design and install a customized technology solution tailored specifically for you.</p>
       </div>
     </div>
 
@@ -354,7 +447,7 @@
     <div class="service-row">
       <div class="service-photo"><img src="https://images.unsplash.com/photo-1745847768408-b7b83796cae6?q=80&w=400&auto=format&fit=crop" alt="Wireless network equipment" loading="lazy"></div>
       <div class="service-name">WiFi optimization</div>
-      <div class="service-desc">Coverage specifically engineered for your home, outdoor area, or commerical space.</div>
+      <div class="service-desc">Coverage specifically engineered for your home, outdoor area, or commercial space.</div>
       <div class="service-tags"><span class="tag">mesh networks</span><span class="tag">Ubiquiti networks</span></div>
     </div>
     <div class="service-row">
@@ -362,6 +455,100 @@
       <div class="service-name">Home theater &amp; golf simulator</div>
       <div class="service-desc">Fully customized home theaters, golf simulators, and whole home audio solutions.</div>
       <div class="service-tags"><span class="tag">home theater</span><span class="tag">multi-room audio</span><span class="tag">Sonos</span></div>
+    </div>
+  </div>
+</section>
+
+<!--
+  ================== OUR WORK CAROUSEL ==================
+  HOW TO ADD YOUR PHOTOS
+  1. Put your photos in an "images" folder next to this file (e.g. images/work-1.jpg).
+     Landscape photos, roughly 1600 x 900 px, work best. Keep each under ~400 KB for fast loading.
+  2. Each <figure class="carousel-slide"> below is one slide. Change the img src, alt text,
+     title, and the type/location line.
+  3. To add a slide, copy a whole <figure>...</figure> block. To remove one, delete its block.
+     The dots and counter update automatically.
+  4. Fill in the alt text with a short description of the photo (helps accessibility and search).
+  5. Vertical (portrait) photos are shown whole over a blurred backdrop; landscape photos fill the frame.
+     To force one or the other, add data-fit="cover" or data-fit="contain" to the <figure> tag.
+-->
+<section id="work">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-label">/ our work</div>
+      <div>
+        <h2>Recent installations</h2>
+        <p class="section-desc">A look at systems we've designed and installed for homes and businesses around Lake Norman.</p>
+      </div>
+    </div>
+
+    <div class="carousel" id="work-carousel" role="region" aria-roledescription="carousel" aria-label="Photos of recent SavvyTech installations" tabindex="0">
+      <div class="carousel-viewport">
+        <div class="carousel-track" id="work-track" aria-live="off">
+
+          <figure class="carousel-slide" role="group" aria-roledescription="slide">
+            <img src="images/work-1.jpg" alt="Framed TV showing floral artwork above a stone fireplace, with a slim soundbar mounted beneath the screen" onerror="this.style.display='none'">
+            <figcaption>
+              <div class="cap-title">Framed TV &amp; soundbar</div>
+              <div class="cap-meta">TV &amp; audio installation</div>
+            </figcaption>
+          </figure>
+
+          <figure class="carousel-slide" role="group" aria-roledescription="slide">
+            <div class="ph">Photo 2 — add images/work-2.jpg</div>
+            <img src="images/work-2.jpg" alt="Describe photo 2" loading="lazy" onerror="this.style.display='none'">
+            <figcaption>
+              <div class="cap-title">Project title</div>
+              <div class="cap-meta">Security · Town</div>
+            </figcaption>
+          </figure>
+
+          <figure class="carousel-slide" role="group" aria-roledescription="slide">
+            <div class="ph">Photo 3 — add images/work-3.jpg</div>
+            <img src="images/work-3.jpg" alt="Describe photo 3" loading="lazy" onerror="this.style.display='none'">
+            <figcaption>
+              <div class="cap-title">Project title</div>
+              <div class="cap-meta">Home automation · Town</div>
+            </figcaption>
+          </figure>
+
+          <figure class="carousel-slide" role="group" aria-roledescription="slide">
+            <div class="ph">Photo 4 — add images/work-4.jpg</div>
+            <img src="images/work-4.jpg" alt="Describe photo 4" loading="lazy" onerror="this.style.display='none'">
+            <figcaption>
+              <div class="cap-title">Project title</div>
+              <div class="cap-meta">WiFi · Town</div>
+            </figcaption>
+          </figure>
+
+          <figure class="carousel-slide" role="group" aria-roledescription="slide">
+            <div class="ph">Photo 5 — add images/work-5.jpg</div>
+            <img src="images/work-5.jpg" alt="Describe photo 5" loading="lazy" onerror="this.style.display='none'">
+            <figcaption>
+              <div class="cap-title">Project title</div>
+              <div class="cap-meta">Golf simulator · Town</div>
+            </figcaption>
+          </figure>
+
+        </div>
+      </div>
+
+      <div class="carousel-controls">
+        <div class="carousel-buttons">
+          <button type="button" class="car-btn" id="car-prev" aria-label="Previous photo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+          </button>
+          <button type="button" class="car-btn" id="car-next" aria-label="Next photo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+          </button>
+          <button type="button" class="car-btn" id="car-toggle" aria-label="Pause slideshow">
+            <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+            <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>
+          </button>
+        </div>
+        <div class="carousel-dots" id="car-dots"></div>
+        <div class="carousel-count" id="car-count" aria-hidden="true"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -394,7 +581,7 @@
       <div class="step">
         <div class="step-num">04</div>
         <h3>Ongoing support</h3>
-        <p>Monitoring, support, and a local team that that is there we you need us.</p>
+        <p>Monitoring, support, and a local team that is there when you need us.</p>
       </div>
     </div>
   </div>
@@ -437,17 +624,17 @@
         <!-- Honeypot to reduce spam -->
         <input type="text" name="_honey" style="display:none!important" tabindex="-1" autocomplete="off">
 
-        <input type="text" name="name" placeholder="Name" required>
-        <input type="tel" name="phone" placeholder="Phone" required>
-        <select name="service" required>
+        <input type="text" name="name" placeholder="Name" aria-label="Name" required>
+        <input type="tel" name="phone" placeholder="Phone" aria-label="Phone" required>
+        <select name="service" aria-label="How can we help?" required>
           <option value="" disabled selected>How can we help?</option>
           <option>Home automation</option>
           <option>Security installation &amp; monitoring</option>
           <option>WiFi optimization</option>
-          <option>TV &amp; home audio</option>
+          <option>Home theater, golf simulator &amp; audio</option>
           <option>Not sure yet</option>
         </select>
-        <textarea name="message" rows="3" placeholder="A little about your space"></textarea>
+        <textarea name="message" rows="3" placeholder="A little about your space" aria-label="A little about your space"></textarea>
         <button type="submit">Request a walkthrough</button>
         <span class="form-note">We'll get back to you within one business day.</span>
       </form>
@@ -458,9 +645,11 @@
 <footer>
   <div class="wrap">
     <div class="foot-grid">
-      <div class="foot-brand"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuYAAAEeCAYAAADGsNC6AAB37klEQVR42u29O48s0balNeKRj6q99znn3qtuHq3+A+DhXXBaYOCBEN1SSwijjW4hQQsJE3Bw+xfg4sO/QAIDB[...]
+      <!-- IMPORTANT: replace the src below with your original footer logo (your existing data:image/png;base64,... string) -->
+      <div class="foot-brand"><img src="YOUR-LOGO-URL" alt="SavvyTech" loading="lazy"></div>
       <div class="foot-links">
         <a href="#services">Services</a>
+        <a href="#work">Our work</a>
         <a href="#process">How it works</a>
         <a href="#area">Service area</a>
         <a href="#contact">Contact</a>
@@ -474,6 +663,135 @@
 </footer>
 
 <script>
+// ---------- Work photo carousel ----------
+(function(){
+  var carousel = document.getElementById('work-carousel');
+  if (!carousel) return;
+
+  var track    = document.getElementById('work-track');
+  var slides   = Array.prototype.slice.call(track.children);
+  var prevBtn  = document.getElementById('car-prev');
+  var nextBtn  = document.getElementById('car-next');
+  var toggle   = document.getElementById('car-toggle');
+  var dotsWrap = document.getElementById('car-dots');
+  var countEl  = document.getElementById('car-count');
+  var viewport = carousel.querySelector('.carousel-viewport');
+
+  var INTERVAL = 5500;           // ms between automatic slide changes
+  var index = 0;
+  var timer = null;
+  var userPaused = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hoverPaused = false;
+
+  if (slides.length < 2) {
+    // Nothing to rotate — hide the controls
+    carousel.querySelector('.carousel-controls').style.display = 'none';
+  }
+
+  // Portrait photos: show the whole photo over a blurred backdrop instead of cropping it.
+  // Override per slide with data-fit="cover" or data-fit="contain" on the <figure>.
+  function fitSlide(slide) {
+    var img = slide.querySelector('img');
+    if (!img || !img.naturalWidth) return;
+    var mode = slide.getAttribute('data-fit');
+    var contain = mode ? mode === 'contain' : (img.naturalWidth / img.naturalHeight) < 1.25;
+    slide.classList.toggle('is-contain', contain);
+    if (contain && !slide.querySelector('.slide-backdrop')) {
+      var bg = document.createElement('div');
+      bg.className = 'slide-backdrop';
+      bg.setAttribute('aria-hidden', 'true');
+      bg.style.backgroundImage = 'url("' + (img.currentSrc || img.src) + '")';
+      slide.insertBefore(bg, slide.firstChild);
+    }
+  }
+  slides.forEach(function (slide) {
+    var img = slide.querySelector('img');
+    if (!img) return;
+    if (img.complete) fitSlide(slide);
+    img.addEventListener('load', function () { fitSlide(slide); });
+  });
+
+  // Label each slide ("1 of 5") and build the dots
+  var dots = slides.map(function (slide, i) {
+    slide.setAttribute('aria-label', (i + 1) + ' of ' + slides.length);
+    var dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'car-dot';
+    dot.setAttribute('aria-label', 'Go to photo ' + (i + 1));
+    dot.addEventListener('click', function () { go(i); restart(); });
+    dotsWrap.appendChild(dot);
+    return dot;
+  });
+
+  function go(i) {
+    index = (i + slides.length) % slides.length;
+    track.style.transform = 'translateX(' + (-index * 100) + '%)';
+    slides.forEach(function (s, n) { s.setAttribute('aria-hidden', n === index ? 'false' : 'true'); });
+    dots.forEach(function (d, n) {
+      if (n === index) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current');
+    });
+    countEl.textContent = (index + 1) + ' / ' + slides.length;
+  }
+
+  function running() { return !userPaused && !hoverPaused && !document.hidden; }
+
+  function stop() { if (timer) { clearInterval(timer); timer = null; } }
+  function start() {
+    stop();
+    if (slides.length < 2 || !running()) return;
+    timer = setInterval(function () { go(index + 1); }, INTERVAL);
+  }
+  function restart() { start(); }
+
+  function syncToggle() {
+    carousel.classList.toggle('is-paused', userPaused);
+    toggle.setAttribute('aria-label', userPaused ? 'Play slideshow' : 'Pause slideshow');
+    track.setAttribute('aria-live', userPaused ? 'polite' : 'off');
+  }
+
+  prevBtn.addEventListener('click', function () { go(index - 1); restart(); });
+  nextBtn.addEventListener('click', function () { go(index + 1); restart(); });
+  toggle.addEventListener('click', function () {
+    userPaused = !userPaused;
+    syncToggle();
+    start();
+  });
+
+  // Pause while the pointer is over the photos or focus is inside the carousel
+  carousel.addEventListener('mouseenter', function () { hoverPaused = true; stop(); });
+  carousel.addEventListener('mouseleave', function () { hoverPaused = false; start(); });
+  carousel.addEventListener('focusin',    function () { hoverPaused = true; stop(); });
+  carousel.addEventListener('focusout',   function () { hoverPaused = false; start(); });
+  document.addEventListener('visibilitychange', start);
+
+  // Keyboard arrows when the carousel has focus
+  carousel.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft')  { go(index - 1); restart(); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { go(index + 1); restart(); e.preventDefault(); }
+  });
+
+  // Swipe on touch screens
+  var startX = null, startY = null;
+  viewport.addEventListener('touchstart', function (e) {
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+  }, { passive: true });
+  viewport.addEventListener('touchend', function (e) {
+    if (startX === null) return;
+    var dx = e.changedTouches[0].clientX - startX;
+    var dy = e.changedTouches[0].clientY - startY;
+    startX = startY = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+      go(dx < 0 ? index + 1 : index - 1);
+      restart();
+    }
+  }, { passive: true });
+
+  syncToggle();
+  go(0);
+  start();
+})();
+
+// ---------- Contact form ----------
 // Submit the contact form via Formsubmit's AJAX endpoint so submissions are emailed to eric@savvytechlkn.com
 (function(){
   var form = document.getElementById('cta-form');
